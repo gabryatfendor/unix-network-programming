@@ -12,6 +12,7 @@
 #include <unistd.h>
 
 #define MAXLINE	4096
+#define LISTENQ 1024
 
 //basic error handling
 
@@ -62,6 +63,23 @@ void err_quit(const char *fmt, ...) {
 }
 
 //function wrappers
+int Accept(int fd, struct sockaddr *sa, socklen_t *salenptr) {
+	int n;
+again:
+	if((n=accept(fd, sa, salenptr)) < 0) {
+#ifdef EPROTO
+		if(errno == EPROTO || errno == ECONNABORTED) {
+#else
+		if(errno == ECONNABORTED) {
+#endif
+			goto again;
+		} else {
+			err_sys("accept error");
+		}
+	}
+	return n;
+}
+
 void Bind(int fd, const struct sockaddr *sa, socklen_t salen) {
 	if(bind(fd, sa, salen) < 0) {
 		err_sys("bind error");
@@ -100,6 +118,24 @@ void Inet_pton(int family, const char *strptr, void *addrptr) {
 		err_sys("inet_pton error for %s", strptr);
 	} else if (n==0) {
 		err_quit("inet_pton error for %s", strptr);
+	}
+}
+
+void Fputs(const char *ptr, FILE *stream) {
+	if(fputs(ptr, stream) == EOF) {
+		err_sys("fputs error");
+	}
+}
+
+void Write(int fd, void *ptr, size_t nbytes) {
+	if(write(fd, ptr, nbytes) != nbytes) {
+		err_sys("write error");
+	}
+}
+
+void Close(int fd) {
+	if(close(fd) == -1) {
+		err_sys("close error");
 	}
 }
 

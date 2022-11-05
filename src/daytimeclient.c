@@ -43,9 +43,7 @@ int main(int argc, char **argv)
 	while((n = read(sockfd, recvline, MAXLINE)) > 0) {
 		recvline[n] = 0;
 		//fputs simply writes recvline into a stream, in this case stdout
-		if(fputs(recvline, stdout) == EOF) {
-			err_sys("fputs error");
-		}
+		Fputs(recvline, stdout);
 	}
 
 	if(n<0) {
