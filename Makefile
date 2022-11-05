@@ -1,4 +1,4 @@
 daytime:
-	gcc -Iinc/ src/daytimeclient.c
+	gcc -Iinc/ src/daytimeclient.c -o bin/daytime-client.out
 clean:
-	rm *.out
+	rm bin/*.out
