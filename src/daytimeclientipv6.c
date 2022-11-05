@@ -11,22 +11,15 @@ int main(int argc, char **argv)
 		err_quit("usage: a.out <IPAddress>");
 	}
 
-	//AF_INET6 for ipv6
-	sockfd = socket(AF_INET6, SOCK_STREAM, 0);
-	if(sockfd < 0) {
-		err_sys("socket error.");
-	}
+	//AF_INET6 is ipv6
+	sockfd = Socket(AF_INET6, SOCK_STREAM, 0);
 
 	bzero(&servaddr, sizeof(servaddr));
 	servaddr.sin6_family = AF_INET6;
 	servaddr.sin6_port = htons(13);
-	if(inet_pton(AF_INET6, argv[1], &servaddr.sin6_addr) <= 0) {
-		err_quit("inet_pton error for %s", argv[1]);
-	}
+	Inet_pton(AF_INET6, argv[1], &servaddr.sin6_addr);
 
-	if(connect(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0) {
-		err_sys("connect error");
-	}
+	Connect(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
 
 	while((n = read(sockfd, recvline, MAXLINE)) > 0) {
 		recvline[n] = 0;

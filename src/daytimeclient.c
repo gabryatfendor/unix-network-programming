@@ -26,10 +26,7 @@ int main(int argc, char **argv)
 
 	//AF_INET is IPv4, SOCK_STREAM is to specify TCP socket
 	//the call to socket return an integer that we will use to call the socket back
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if(sockfd < 0) {
-		err_sys("socket error.");
-	}
+	sockfd = Socket(AF_INET, SOCK_STREAM, 0);
 
 	//bzero erases n bite starting from the first parameter
 	bzero(&servaddr, sizeof(servaddr));
@@ -37,14 +34,10 @@ int main(int argc, char **argv)
 	//htons, host to network short, is part of a set of functions which convert values between host and network byte order
 	servaddr.sin_port = htons(13);
 	//inet_pton, presentation to numeric, convert ipv4 and ipv6 addresses from text to binary form. The parameter are ipversion (AF_INET), the string source (in this case command line parameter) and the "string" destination
-	if(inet_pton(AF_INET, argv[1], &servaddr.sin_addr) <= 0) {
-		err_quit("inet_pton error for %s", argv[1]);
-	}
+	Inet_pton(AF_INET, argv[1], &servaddr.sin_addr);
 
 	//actual socket connection. We pass as parameter the socket declared before, the sockaddr struct and the size of it
-	if(connect(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0) {
-		err_sys("connect error");
-	}
+	Connect(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
 
 	//everytime we read from a TCP stream we MUST enclose the reading in a loop, cause there is no way to know how much will the data be fragmented.
 	while((n = read(sockfd, recvline, MAXLINE)) > 0) {
