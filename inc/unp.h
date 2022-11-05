@@ -13,6 +13,7 @@
 
 #define MAXLINE	4096
 
+//basic error handling
 
 int daemon_proc;
 
